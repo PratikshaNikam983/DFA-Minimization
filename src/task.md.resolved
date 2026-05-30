@@ -1,0 +1,47 @@
+# DFA Minimization System – Task Breakdown
+
+## 1. Project Setup
+- [ ] Install frontend dependencies (react-router-dom, tailwindcss, axios)
+- [ ] Configure Tailwind CSS
+- [ ] Create backend project with Express, cors, nodemon
+- [ ] Set up folder structures for frontend and backend
+
+## 2. Backend Implementation
+- [ ] `algorithms/minimizeDFA.js` – DFA validation, unreachable state removal, partition refinement
+- [ ] `controllers/dfaController.js` – request handler
+- [ ] `routes/dfaRoutes.js` – POST /api/minimize
+- [ ] `server.js` – Express app entry point
+
+## 3. Frontend – Core Layout & Routing
+- [ ] `components/Navbar.jsx` – navigation bar
+- [ ] [App.jsx](file:///c:/Users/Lenovo/Documents/Sem-IV%20Project/Sem-Project/src/App.jsx) – React Router setup
+- [ ] [main.jsx](file:///c:/Users/Lenovo/Documents/Sem-IV%20Project/Sem-Project/src/main.jsx) – entry point with BrowserRouter
+
+## 4. Frontend – Pages
+- [ ] `pages/Home.jsx` – landing page with project overview
+- [ ] `pages/InputDFA.jsx` – DFA input page (uses DFAForm)
+- [ ] `pages/Result.jsx` – minimized DFA result & partition steps
+- [ ] `pages/Visualization.jsx` – SVG graph visualization
+- [ ] `pages/About.jsx` – educational content about DFA minimization
+
+## 5. Frontend – Components
+- [ ] `components/DFAForm.jsx` – form for DFA input + predefined examples
+- [ ] `components/TransitionTable.jsx` – render transition table
+- [ ] `components/PartitionSteps.jsx` – render step-by-step partitions
+
+## 6. Frontend – Services
+- [ ] `services/api.js` – Axios instance + minimize API call
+
+## 7. Styling & Polish
+- [ ] Tailwind configuration + global styles
+- [ ] Responsive design pass
+- [ ] Loading spinner, error messages, toast feedback
+
+## 8. Verification
+- [ ] Backend unit test with sample DFAs
+- [ ] End-to-end browser test (input → result → visualization)
+- [ ] Download JSON feature test
+
+## 9. Documentation
+- [ ] Professional README.md
+- [ ] Code comments throughout

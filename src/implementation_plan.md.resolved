@@ -1,0 +1,140 @@
+# DFA Minimization System – Implementation Plan
+
+A full-stack web application for inputting, validating, minimizing, and visualizing Deterministic Finite Automata. The frontend is React + Vite + Tailwind CSS; the backend is Node.js + Express.
+
+## Proposed Changes
+
+### 1. Project Setup
+
+#### Frontend (existing `Sem-Project/`)
+- Install: `react-router-dom`, `axios`, `tailwindcss @tailwindcss/vite`
+- Add Tailwind Vite plugin to [vite.config.js](file:///c:/Users/Lenovo/Documents/Sem-IV%20Project/Sem-Project/vite.config.js)
+- Replace [index.css](file:///c:/Users/Lenovo/Documents/Sem-IV%20Project/Sem-Project/src/index.css) with Tailwind directives + custom design tokens
+
+#### [NEW] Backend (`Sem-Project/backend/`)
+- `npm init -y`, install: `express`, `cors`, `nodemon`
+- Add `"dev": "nodemon server.js"` script
+
+---
+
+### 2. Backend – Algorithm & API
+
+#### [NEW] [minimizeDFA.js](file:///c:/Users/Lenovo/Documents/Sem-IV%20Project/Sem-Project/backend/algorithms/minimizeDFA.js)
+Core algorithm module exporting:
+- **`validateDFA(dfa)`** – checks states, alphabet, deterministic transitions, valid start/final states. Returns `{ valid, errors[] }`.
+- **`removeUnreachableStates(dfa)`** – BFS from start state; removes unreachable states and their transitions.
+- **`minimizeDFA(dfa)`** – Hopcroft-style partition refinement:
+  1. Initial partition: `{finalStates, nonFinalStates}`
+  2. Iteratively split partitions when two states in the same group transition to different groups on the same symbol
+  3. Track each iteration as a `partitionStep` object `{ step, partitions, description }`
+  4. Build minimized DFA (new states, transitions, start, finals)
+  5. Return `{ reachableStates, partitionSteps, minimizedDFA }`
+
+#### [NEW] [dfaController.js](file:///c:/Users/Lenovo/Documents/Sem-IV%20Project/Sem-Project/backend/controllers/dfaController.js)
+- `minimizeHandler(req, res)` – validates input, calls algorithm, returns JSON response.
+
+#### [NEW] [dfaRoutes.js](file:///c:/Users/Lenovo/Documents/Sem-IV%20Project/Sem-Project/backend/routes/dfaRoutes.js)
+- `POST /api/minimize` → `minimizeHandler`
+
+#### [NEW] [server.js](file:///c:/Users/Lenovo/Documents/Sem-IV%20Project/Sem-Project/backend/server.js)
+- Express app on port 5000, cors enabled, JSON body parser, mounts routes.
+
+---
+
+### 3. Frontend – Routing & Layout
+
+#### [MODIFY] [App.jsx](file:///c:/Users/Lenovo/Documents/Sem-IV%20Project/Sem-Project/src/App.jsx)
+- Set up `<Routes>` with paths: `/`, `/input`, `/result`, `/visualize`, `/about`
+- Wrap with `<Navbar />` layout
+
+#### [MODIFY] [main.jsx](file:///c:/Users/Lenovo/Documents/Sem-IV%20Project/Sem-Project/src/main.jsx)
+- Wrap `<App />` with `<BrowserRouter>`
+
+#### [NEW] [Navbar.jsx](file:///c:/Users/Lenovo/Documents/Sem-IV%20Project/Sem-Project/src/components/Navbar.jsx)
+- Responsive nav bar with links to all pages, active-link highlighting, mobile hamburger menu.
+
+---
+
+### 4. Frontend – Pages
+
+#### [NEW] [Home.jsx](file:///c:/Users/Lenovo/Documents/Sem-IV%20Project/Sem-Project/src/pages/Home.jsx)
+- Hero section with gradient background
+- Feature cards (Input, Minimize, Visualize, Download)
+- Call-to-action button → `/input`
+
+#### [NEW] [InputDFA.jsx](file:///c:/Users/Lenovo/Documents/Sem-IV%20Project/Sem-Project/src/pages/InputDFA.jsx)
+- Hosts `<DFAForm />` component
+- Manages DFA state and API call via `services/api.js`
+- On success, stores result in state and navigates to `/result`
+
+#### [NEW] [Result.jsx](file:///c:/Users/Lenovo/Documents/Sem-IV%20Project/Sem-Project/src/pages/Result.jsx)
+- Shows original DFA table, partition steps, minimized DFA table
+- Uses `<TransitionTable />` and `<PartitionSteps />`
+- "Download JSON" button, "Visualize" button
+
+#### [NEW] [Visualization.jsx](file:///c:/Users/Lenovo/Documents/Sem-IV%20Project/Sem-Project/src/pages/Visualization.jsx)
+- SVG-based graph rendering of original and minimized DFA side-by-side
+- Nodes = circles (double-circle for final states), arrows with labels for transitions
+- An arrow from nowhere points to start state
+
+#### [NEW] [About.jsx](file:///c:/Users/Lenovo/Documents/Sem-IV%20Project/Sem-Project/src/pages/About.jsx)
+- Explains DFA, minimization algorithm, time complexity, use-cases
+
+---
+
+### 5. Frontend – Components
+
+#### [NEW] [DFAForm.jsx](file:///c:/Users/Lenovo/Documents/Sem-IV%20Project/Sem-Project/src/components/DFAForm.jsx)
+- Fields: states (comma-separated), alphabet, start state, final states, transition table (dynamic rows)
+- 2 predefined example DFA buttons to auto-fill
+- Client-side validation before submission
+- Loading spinner on submit
+
+#### [NEW] [TransitionTable.jsx](file:///c:/Users/Lenovo/Documents/Sem-IV%20Project/Sem-Project/src/components/TransitionTable.jsx)
+- Renders a DFA's transition function as a styled table
+
+#### [NEW] [PartitionSteps.jsx](file:///c:/Users/Lenovo/Documents/Sem-IV%20Project/Sem-Project/src/components/PartitionSteps.jsx)
+- Renders each partition refinement step as a numbered card with partition groups
+
+---
+
+### 6. Frontend – Services
+
+#### [NEW] [api.js](file:///c:/Users/Lenovo/Documents/Sem-IV%20Project/Sem-Project/src/services/api.js)
+- Axios instance with `baseURL: http://localhost:5000`
+- `minimizeDFA(dfaData)` function → `POST /api/minimize`
+
+---
+
+### 7. Styling
+
+#### [MODIFY] [index.css](file:///c:/Users/Lenovo/Documents/Sem-IV%20Project/Sem-Project/src/index.css)
+- Tailwind `@import "tailwindcss"` + custom CSS variables for color palette
+
+#### [DELETE] [App.css](file:///c:/Users/Lenovo/Documents/Sem-IV%20Project/Sem-Project/src/App.css)
+- Not needed; all styling via Tailwind utility classes
+
+#### [MODIFY] [index.html](file:///c:/Users/Lenovo/Documents/Sem-IV%20Project/Sem-Project/index.html)
+- Update title to "DFA Minimization System", add Inter font from Google Fonts
+
+---
+
+## Verification Plan
+
+### Automated Tests
+1. **Backend algorithm test** – create a Node.js script `backend/test.js` that runs 2 sample DFAs through the minimization pipeline and asserts correct output (partition steps count, minimized state count, transitions).
+   - Run: `cd Sem-Project/backend && node test.js`
+
+### Browser Verification
+2. **End-to-end flow** – use the browser tool to:
+   - Navigate to `http://localhost:5173`
+   - Click through to the Input page
+   - Load a predefined example DFA
+   - Submit and verify the Result page renders partition steps + minimized DFA
+   - Navigate to Visualization and confirm SVG graph renders
+   - Click Download JSON and verify file content
+
+### Manual Verification
+3. The user can verify the UI looks professional and all pages are accessible by navigating through the app after both servers are started:
+   - `cd Sem-Project && npm run dev` (frontend on port 5173)
+   - `cd Sem-Project/backend && npm run dev` (backend on port 5000)

@@ -1,0 +1,63 @@
+Update Project Theme to Match Screenshot Design
+The current DFA Minimizer project has 6 color themes (indigo, midnight, emerald, sunset, ocean, amber). The user wants to replace them with 2 themes that match the PlacementCRM-style screenshots: a dark mode (deep navy + purple accents) and a light mode (white/lavender + purple accents).
+
+Proposed Changes
+Theme Color Palette (extracted from screenshots)
+Dark Theme ("dark")
+
+Token	Color	Description
+bg-primary	#0b0f1a	Deep navy page background
+bg-secondary	#111827	Card / sidebar backgrounds
+bg-tertiary	#1a2035	Elevated card sections
+bg-elevated	#1e2640	Hover/elevated surfaces
+accent	#8b5cf6	Purple accent (buttons, active elements)
+accent-hover	#7c3aed	Deeper purple on hover
+gradient	#6366f1 → #8b5cf6	Purple gradient (profile header, brand)
+border	#1e293b	Subtle dark borders
+text-primary	#e8ecf4	White text
+text-muted	#7882a0	Muted sidebar / secondary text
+Light Theme ("light")
+
+Token	Color	Description
+bg-primary	#f0f2f8	Soft lavender-white page background
+bg-secondary	#ffffff	White cards
+bg-tertiary	#f5f7fb	Light elevated sections
+accent	#7c3aed	Purple accent
+accent-hover	#6d28d9	Deeper purple hover
+gradient	#6366f1 → #8b5cf6	Same purple gradient
+border	#e2e5f0	Soft lavender borders
+text-primary	#111827	Dark text
+text-muted	#6b7280	Gray secondary text
+CSS Theme Variables
+[MODIFY] 
+index.css
+Remove all 6 existing theme variable blocks (indigo, midnight, emerald, sunset, ocean, amber)
+Add 2 new theme variable blocks: [data-theme="dark"] and [data-theme="light"] (light as :root default)
+Colors will match the screenshot palette above
+All remaining CSS (components, layout, buttons, etc.) stays the same — they already use var() tokens
+Navbar Theme Picker
+[MODIFY] 
+Navbar.jsx
+Replace the 6-item THEMES array with 2 items: { id: 'light', name: 'Light Mode' } and { id: 'dark', name: 'Dark Mode' }
+Replace the palette-picker button icon (🎨) with a sun/moon toggle icon
+Theme dropdown becomes a simple toggle button (click to switch between light ↔ dark) instead of a dropdown menu
+App Default Theme
+[MODIFY] 
+App.jsx
+Update the default theme fallback from 'midnight'/'indigo' to 'dark'/'light' based on system preference
+Home Page Hardcoded Colors
+[MODIFY] 
+Home.jsx
+Replace hardcoded hex colors (#1f2937, #6b7280) with CSS variable references (var(--text-primary), var(--text-muted)) so they respond to themes
+About Page Hardcoded Colors
+[MODIFY] 
+About.jsx
+Replace hardcoded #9ca3af with var(--text-faint) so footer text responds to themes
+Verification Plan
+Manual Verification (Browser)
+Run npm run dev in the Sem-Project directory
+Open the app in browser
+Verify the dark theme matches the deep navy + purple style from the first screenshot
+Toggle to light theme and verify it matches the white/lavender + purple style from the second screenshot
+Navigate across all pages (Home, Input DFA, Results, Visualize, About) to confirm no broken colors or hardcoded values
+Check that the theme toggle persists on page reload (localStorage)
